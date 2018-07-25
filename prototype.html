@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>prototype</title>
+</head>
+<body>
+    <script>
+        function Person(){
+        }
+        Person.prototype.name = 'Jack';
+        Person.prototype.age = 29;
+        Person.prototype.job = 'Engineer developer';
+        Person.prototype.sayName = function(){
+            alert(this.name);
+        };
+
+        var person1 = new Person();
+        var person2 = new Person();
+
+        //虽然现实中无法访问到实例对象的[[prototype]]内部属性，但是可以通过原型对象的isPrototypeOf方法验证实例对象与原型对象之间的联系
+        alert(Person.prototype.isPrototypeOf(person1));   //true      person1的内部有指向Person.prorotype的属性，因此返回true
+        alert(Person.prototype.isPrototypeOf(person2));   //true
+
+        //通过Object的getPrototype方法，返回实例对象的[[prototype]]内部属性值，也就是Person.prototype
+        alert(Object.getPrototypeOf(person1) == Person.prototype);    //true
+        alert(Object.getPrototypeOf(person1).name);    //'Jack'
+
+        //根据对象属性查找给定的属性名，先从实例对象本身属性上查找，若找到返回，否则再去原型对象上查找，若找到返回，否则返回undefeined
+        person1.name = 'Greg';
+        alert(person1.name);      //'Greg'
+        alert(person2.name);      //'Jack'
+        alert(person1.position);  //undefined
+
+        //可以通过hasOwnProperty方法，判断属性是实例对象属性还是原型对象属性
+        alert(person1.hasOwnProperty('name'));    //true
+        alert(person2.hasOwnProperty('name'));    //false
+
+        //只能访问实例对象的属性或方法，但不能修改，弱实例对象定义的属性与原型对象的相同，只会覆盖。即使属性值为null，也不能恢复其指向原型
+        person1.name = null;
+        alert(person1.name);      //null
+
+        //可以通过delete删除实例属性，从未恢复对原型的指向
+        delete person1.name;
+        alert(person1.name);      //'Jack'
+
+        //in操作符，通过对象能够访问到属性时返回true，无论是在实力对象本身还是原型，因此可以结合hasOwnProperty方法判断出属性是原型上的
+        alert('name' in person1);   //true, 在实例对象本身检索到name属性
+        alert('name' in person2);   //true, 在原型对象上检索到name属性
+        function hasPrototypeProperty(obj, prop){
+            return !obj.hasOwnProperty(prop) && prop in obj;
+        }
+        person1.name = 'Tom';
+        alert(hasPrototypeProperty(person1, 'name'));   //false
+        alert(hasPrototypeProperty(person2, 'name'));   //true
+
+        //for-in遍历时，只能返回对象能够访问的、可枚举（enumerable）的属性，既包括实例对象中的属性，也包括原型对象上的属性
+        //屏蔽了原型对象中不可枚举的属性的实例属性也可以遍历出来
+        // 但是IE仍然无法遍历出来，其中还包括hasOwnProperty/propertyEnumerable/toLocaleString/toString/valueOf/constructor/prototype
+        var o = {};
+        var attrArray = [];
+        for(var attr in o){
+            if(attr = 'toString'){
+                alert('Found String');     //not found toString, so can not alert
+            }
+            attrArray.push(attr);
+        }
+        console.log(attrArray);  //[]
+        o.toString = function(){
+            alert('My Object');
+        };
+        for(var attr in o){
+            if(attr = 'toString'){
+                alert('Found String');
+            }
+        }
+        //Object.keys，返回对象上的所有可枚举的实例属性
+        console.log(Object.keys(Person.prototype));       //['name', 'age', 'job', 'sayName']
+        console.log(Object.keys(person1));                //['name']
+        //Object.getOwnPropertyNames,返回对象上的所有实例属性，包括不可枚举属性
+        console.log(Object.getOwnPropertyNames(Person.prototype));    //['constructor', 'name', 'age', 'job', 'sayName']
+        //因此，Object.keys和Object.getOwnPropertyNames都可以代替for-in遍历获取对象的实例属性
+    </script>
+</body>
+</html>
