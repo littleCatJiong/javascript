@@ -40,6 +40,45 @@
                 }
             }
         }
+
+        //3.寄生构造函数，当构造函数+原型、动态原型模式都不能用的情况下可以使用寄生构造函数模式
+        //传统的构造函数，不返回值得情况下，默认返回新实例对象，而寄生构造函数，默认添加一个return语句，改写了调用构造函数的默认返回值
+        function Person2(name, age, job){
+            var o = new Object();
+            o.name = name;
+            o.age = age;
+            o.job = job;
+            o.sayName = function(){
+                console.log(this.name);
+            };
+            return o;
+        }
+        var person2_01 = new Person2('Jack', 29, 'Engineer developer');
+        person2_01.sayName();    //'Jack'
+
+        //说明通过调用构造函数返回的值（对象）无法通过instanceof来判断对象类型,不推荐使用，但是可以为原生构造函数添加特殊的属性和方法
+        function SpecialArray(){
+            var newArray = new Array();
+            newArray.push.apply(newArray, arguments);
+            newArray.toPipedString = function(){
+                return this.join('|');
+            };
+            return newArray;
+        }
+        var specialArray1 = new SpecialArray('red', 'blue', 'green');
+        console.log(specialArray1.toPipedString());    //'red|blue|green'
+        //4.稳妥构造函数
+            //稳妥对象，没有公共属性，且方法也不引用this的对象。因此适合需要绝对安全的环境中（禁止使用this和new）
+            //与寄生构造函数相似，封装在构造函数内部。但是不使用new操作符，实例不引用this
+        function Person3(name, age, job){
+            var o = new Object();
+            o.sayName = function(){
+                console.log(name);
+            };
+            return o;
+        }
+        var person3_01 = Person3('Jack', 29, 'Engineer developer');
+        person3_01.sayName();           //’jack'      只有调用sayName方法时访问到内部的name属性，其他任何方法都无法操作到构造函数中的原始数据
     </script>
 </body>
 </html>
