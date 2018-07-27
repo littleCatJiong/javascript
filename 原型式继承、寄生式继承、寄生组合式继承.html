@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>原型式继承、寄生式继承、寄生组合式继承</title>
+</head>
+<body>
+    <script>
+        //1.原型式继承
+        function object(o){
+            function F(){
+            }
+            F.prototype = o;
+            return new F();
+        }
+        var person = {
+            name: 'Jack',
+            friends: ['Rose', 'Anna', 'Van']
+        };
+        var anotherPerson = object(person);   //anotherPerson.__proto__ = person  原型对象其实就是person的一个副本
+        anotherPerson.name = 'Grek';          //给实例对象anotherPerson添加一个属性name
+        console.log(anotherPerson.name);      //'Grek'
+        anotherPerson.friends.push('Tom');    //person的friends添加一个元素
+        console.log(person.friends);          //['Rose', 'Anna', 'Van', 'Tom']
+
+        var yetAnotherPerson = object(person);
+        yetAnotherPerson.name = 'Linda';
+        yetAnotherPerson.friends.push('Dark');
+
+        console.log(person.friends);          //['Rose', 'Anna', 'Van', 'Tom', 'Dark']
+            //Object.create()规范化原型式继承
+        var person1 = {
+            name: 'Jack',
+            friends: ['Rose', 'Anna', 'Van']
+        };
+        var anotherPerson1 = Object.create(person1);
+        anotherPerson1.name = "Greg";
+        anotherPerson1.friends.push("Rob");
+
+        var yetAnotherPerson1 = Object.create(person1);
+        yetAnotherPerson1.friends.push("Barbie");
+
+        console.log(person1.friends);   //['Rose', 'Anna', 'Van', 'Rob', 'Barbie']
+
+        var lastPerson1 = Object.create(person1, {
+            name: {
+                value: 'clark'
+            }
+        });
+        console.log(anotherPerson1.name, yetAnotherPerson1.name, lastPerson1.name);  //'Greg, 'jack', 'clark' -- 自定义属性、原型属性、自定义属性
+        //原型对象包含引用类型的值时，所有的实例对象始终共享相应的值就像原型模式一样
+
+        //2.寄生式继承
+            //参数，作为新对象的基础的对象original
+        function createAnother(original){
+            var clone = object(original);            //clone.__proto__ = original
+            clone.sayHi = function(){
+                console.log('hi');
+            };
+            return clone;
+        }
+        var person2 = {
+            name: "Nicholas",
+            friends: ["Shelby", "Court", "Van"]
+        };
+        //基于对象person2，产生了一个新的对象anotherPerson2，同时    具有person2的属性和方法，还有自己的方法sayHi
+        var anotherPerson01 = createAnother(person2);    //
+        console.log(anotherPerson01);                    //anotherPerson01的属性： sayHi: ...    __proto__: person2
+        anotherPerson01.sayHi();
+        //3.寄生组合式继承
+            //借用构造函数和原型链组合继承
+                //在第一次调用超类型构造函数时，SubType.prototype对象拥有两个属性[name, colors],也就是SuperType的实例属性
+                //当调用SubType时，会第二次调用超类型构造函数，新生成的实例对象就包含两个实例属性[name, colors],此时新对象的实例属性就会屏蔽原型对象上的属性
+        function SuperType(name){
+            this.name = name;
+            this.colors = ["red", "blue", "green"];
+        }
+        SuperType.prototype.sayName = function(){
+            //子类型构造函数（SubType）的所有实例都包含超类型构造函数的属性和方法，因此有时候就要去重写这个属性
+            console.log(this.name);                  //第二次调用超类型构造函数
+        };
+        function SubType(name, age){
+            SuperType.call(this, name);
+            this.age = age;
+        }
+        SubType.prototype = new SuperType();          //第一次调用超类型构造函数
+        SubType.prototype.constructor = SubType;
+        SubType.prototype.sayAge = function(){
+            console.log(this.age);
+        };
+            //寄生组合式继承，解决了上述组合继承的问题
+                //通过借用构造函数来继承属性，通过原型链的混成形式来继承方法
+        function inhertiPrototype(subType, superType){
+            var prototype = object(superType.prototype);         //创建新对象，以superType的原型对象作为基础对象
+            prototype.constructor = subType;                     //增强新对象
+            subType.prototype = prototype;                       //SuperType的原型对象指向该新对象
+        }
+        function SuperType1(name){
+            this.name = name;
+            this.colors = ["red", "blue", "green"];
+        }
+        SuperType1.prototype.sayName = function(){
+            console.los(this.name);
+        };
+        function SubType1(name, age){
+            SuperType1.call(this, name);
+            this.age = age;
+        }
+        inhertiPrototype(SubType1, SuperType1);
+        SubType.prototype.sayAge = function(){
+            console.log(this.age);
+        };
+        var instance001 = new SubType1();
+        console.log(instance001.colors);    //["red", "blue", "green"]
+
+
+
+        /*4.总结
+          ①.创建对象的模式:
+                工厂模式：
+                    创建对象，为对象添加属性和方法，然后返回对象
+                构造函数模式
+                    可以像创建内置对象实例一样使用new操作符，但是每个成员都无法复用
+                原型模式
+                    构造函数的prototype来指定共享的属性和方法
+                构造函数+原型模式的组合
+                    构造函数定义属性
+                    原型创建共享属性和方法
+          ②.继承的方式：
+                原型链继承
+                    主要实现继承方式
+                    原型链的构建：将一个类型的实例赋值给另一个构造函数的原型对象
+                    但是所有实例都共享原型的属性和方法
+                借用构造函数
+                    解决原型链继承中的原型属性和方法共享的问题，在子类型构造函数中，调用超类型构造函数，每个实例就拥有了各自的属性
+                组合继承（原型链+借用构造函数）
+                原型继承
+                    对给定对象的浅复制，再进一步的增强
+                寄生式继承
+                    与原型继承相似，先基于一个对象创建一个新的对象，然后增强对象，最后返回对象
+                寄生组合继承
+                    是实现基于类型继承的最有效方式
+        */
+    </script>
+</body>
+</html>

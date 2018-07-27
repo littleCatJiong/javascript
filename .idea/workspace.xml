@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c1875c1d-0ca5-4b97-a66e-a385ca3b8cf7" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/继承.html" afterPath="" />
-    </list>
+    <list default="true" id="c1875c1d-0ca5-4b97-a66e-a385ca3b8cf7" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -17,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="借用构造函数继承.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/借用构造函数继承.html">
+      <file leaf-file-name="原型式继承、寄生式继承、寄生组合式继承.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/原型式继承、寄生式继承、寄生组合式继承.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="15" column="33" lean-forward="true" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
+            <state relative-caret-position="591">
+              <caret line="137" column="37" lean-forward="true" selection-start-line="137" selection-start-column="37" selection-end-line="137" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -41,6 +38,7 @@
         <option value="$PROJECT_DIR$/继承.html" />
         <option value="$PROJECT_DIR$/原型链继承.html" />
         <option value="$PROJECT_DIR$/借用构造函数继承.html" />
+        <option value="$PROJECT_DIR$/原型式继承、寄生式继承、寄生组合式继承.html" />
       </list>
     </option>
   </component>
@@ -120,12 +118,12 @@
       <workItem from="1532487687334" duration="12881000" />
       <workItem from="1532567988804" duration="389000" />
       <workItem from="1532568798481" duration="14585000" />
-      <workItem from="1532654899892" duration="4476000" />
+      <workItem from="1532654899892" duration="12058000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32331000" />
+    <option name="totallyTimeSpent" value="39913000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="7" />
@@ -218,6 +216,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
           <caret line="15" column="33" lean-forward="true" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/借用构造函数继承、组合继承.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-816">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/原型式继承、寄生式继承、寄生组合式继承.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="591">
+          <caret line="137" column="37" lean-forward="true" selection-start-line="137" selection-start-column="37" selection-end-line="137" selection-end-column="37" />
           <folding />
         </state>
       </provider>
