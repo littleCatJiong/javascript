@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>模仿块级作用域</title>
+</head>
+<body>
+    <script>
+        //1.JavaScript没有块级作用域的概念
+            //在C++、java等语言中，由于i是在for语句块里定义的，因此在for循环结束之后，变量i就会被销毁
+        function outputNmbers(count){
+            for(var i=0;i<count;i++){
+                console.log(i);
+            }
+            console.log(i);
+        }
+        outputNmbers(2);  //0, 1, 2(for循环外的i)
+            //Javascript从来不会提示你是否毒刺声明同一个变量，遇到这种情况，它只会对后面的声明视而不见,但是会执行初始化
+        function outputNmbers1(count){
+            for(var i=0;i<count;i++){
+                console.log(i);
+            }
+            var i;
+            console.log(i);
+            var i = 10;
+            var b =3;
+            var b;
+            console.log(i, b);
+        }
+        outputNmbers1(2);   //0, 1, 2(for循环外的i), 10, 3
+
+
+            //但是匿名函数可以模仿块级作用域以及上述的问题
+        //function(){}()         //error
+            //JS将function视为一个函数声明的开始，而函数声明后面是不能跟圆括号的，然后函数表达式的后面是可以跟圆括号的，只要将函数的申明加一对圆括号就变成了函数表达式
+        (function(){
+            //这里是块级作用域
+        })();
+            //将函数声明赋值给一个变量
+        var someFunc = function(){
+            //这里是块级作用域
+        };
+        someFunc();
+
+        function outputNmbers2(count){
+            (function(){                        //这种方式，实现了在for循环外部创建一个私有作用域，在匿名函数中定义的所有变量都会在执行完匿名函数之后被销毁
+                for(var i=0;i<count;i++){
+                    console.log(i);
+                }
+            })();
+            console.log(i);     //error, i is not undeined
+        }
+        outputNmbers2(2);
+        /*
+            通过匿名函数实现的块级作用域（私有作用域），这种方式一般用于在函数的外部，从而限制向全局作用域中添加过多的全局变量和函数。
+            我们一般都是尽量少的向全局作用域中添加变量和函数，在众多开发人员的情况下，避免公共变量（全局变量）的命名冲突
+        */
+        (function(){
+            var now = new Date();
+            if(now.getMonth() == 0 && now.getDate() == 1){
+                console.log('Happy new year!');
+            }
+        })();
+    </script>
+</body>
+</html>

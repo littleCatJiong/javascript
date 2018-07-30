@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>私有变量</title>
+</head>
+<body>
+    <script>
+        //1.JavaScript没有私有成员的概念，但是有一个私有变量的概念。任何在函数中定义的变量，都可以称作为私有变量，不能在函数外部调用。
+            //私有变量包括：函数的参数、局部变量和函数内部定义的其他函数
+        function add(num1, num2){         //函数的参数num1, num2
+            var sum = num1 + num2;        //函数内部定义的局部变量sum             因此有三个私有变量
+            return sum;
+        }
+        console.log(add(1,2));          //3
+            //在上述的函数内部创建一个闭包，那么闭包就可以通过作用域链访问函数的私有变量    ---    通过这种方式创建访问私有变量的公有方法，也就是特权方法
+            //特权方法创建的模式一：
+        function MyObject(){
+            var privateVariable = 10;               //私有变量
+
+            function privateFunction(){             //私有函数
+                return false;
+            }
+
+            this.publicMethod = function(){           //特权方法，访问私有变量privateVariable，私有函数privateFunction
+                privateVariable++;
+                return privateFunction();
+            }
+        }
+        function Person(name){
+            this.getName = function(){
+                return name;
+            };
+            this.setName = function(value){
+                name = value;
+            }
+        }
+        var person = new Person('Jack');
+        console.log(person.getName());              //'jack'
+        person.setName('Rose');
+        console.log(person.getName());              //'Rose'
+            //通过构造函数的方式定义特权方法，缺点就是构造函数的确定，针对每一个实例对象，都要创建一组同样的方法，而通过静态私有变量的方式就可以避免这个问题
+            //静态私有变量
+        (function(){                                //私有作用域
+            var privateVariable = 10;               //私有变量
+
+            function privateFunction(){             //私有函数
+                return false;
+            }
+
+            MyObject = function(){};                //没有通过var定义，说明创建了一个全局的构造函数，在此私有作用域之外也是可以访问的
+            MyObject.prototype.publicMethod = function(){       //实现了所有实例共享这个特权方法，即操作私有变量和私有函数的特权
+                privateVariable++;
+                return privateFunction();
+            }
+        })();
+            //但是闭包始终保持着对外部函数作用域的引用
+        (function(){
+            var name = '';
+            Person1 = function(value){
+                name = value;
+            };
+            Person1.prototype.getName = function(){
+                return name;
+            };
+            Person1.prototype.setName = function(value){
+                name = value;
+            }
+        })();
+        var person1 = new Person1('Jack');
+        console.log(person1.getName());         //'Jack'
+        person1.setName('Rose');
+        console.log(person1.getName());         //'Rose'
+
+        var perspn2 = new Person1('Tom');
+        console.log(person1.getName());         //'Tom'
+        console.log(perspn2.getName());         //'Tom'
+            //使用实例变量还是静态私有变量，根据需求而定
+        /* 特权方法创建的模式二：模块模式  ---   为单例（只有一个实例的对象）创建私有变量和特权方法
+            模式一，一般是用来自定义类型创建私有变量和函数的特权方法
+         */
+        var singleton = {
+            name: value,
+            method: function(){
+                //代码
+            }
+        };
+        var singleton1 = function(){
+            var privateVariable = 10;
+
+            function privateFunction(){
+                return false;
+            }
+            return {
+                publicProperty: true,
+                publicMethod: function(){
+                    privateVariable++;
+                    return privateFunction();
+                }
+            }
+        };
+
+        /*
+            特权方法创建的模式三：增强的模块模式    用于那种单例必须是某种类型的实例，同时还必须添加某些属性和方法对其以增强
+        */
+        var singleTon2 = function(){
+            var privateVariable = 10;
+
+            function privateFunction(){
+                return false;
+            }
+
+            var object = new CustomType();      //object是CustomType的实例
+            object.publicProperty = true;       //添加publicProperty属性
+            object.publicMethod = function(){   //添加publicMethod方法
+                privateVariable++;              //操作私有变量privateVariable
+                return privateFunction();       //操作私有方法privateFunction
+            };
+            return object;
+        }();
+
+        var application = function(){
+
+            var components = new Array();                   //私有变量components
+            //初始化components
+            components.push(new BaseComponent());
+
+            //创建application的一个局部副本
+            var app = new BaseComponent();                  //app是基于BaseComponent的一个实例
+
+            //公共接口
+            app.getComponentCount = function(){             //增强app对象，为其添加getComponentCount方法，访问私有变量components
+                return components.length;
+            };
+            app.registerComponent = function(component){    //增强app对象，为其添加registerComponent方法，访问私有变量components
+                if(typeof component == 'object'){
+                    components.push(component);
+                }
+            };
+            //返回这个副本
+            return app;
+        }();
+
+        /*
+            总结：
+                函数声明，function关键字后面要求有名字，但是表达式不需要，没有名字的函数表达式也叫匿名函数
+                递归函数中，应该通过arguments.callee来始终调用自身
+                闭包，在函数内部定义其他函数，就产生了闭包，其有权访问包含函数的所有变量和方法
+                闭包的作用域链中，包含自己的作用域，包含函数的作用域和全局作用域
+                通常情况下，函数的作用域和变量在函数执行结束之后被销毁，但是当函数返回一个闭包时，函数的作用域将会一直保存在内存中到闭包不存在为止
+                使用闭包，可以模仿块级作用域
+                    1.创建函数并立即执行，实现块级作用域
+                    2.函数内部的所有变量和函数都会被销毁，当函数执行结束，除非将变量赋值给包含作用域（即外部函数作用域）中的变量
+                使用闭包，可以在对象中创建私有变量，和公有方法
+                    1.JS没有私有对象属性的概念，但是有私有变量
+                    2.有权访问私有变量的公有方法，叫做特权方法
+                    3.可以使用构造函数模式、原型模式来实现自定义类型的特权方法
+                    4.可以使用模块模式、增强模块模式实现单例的特权方法
+                过度使用闭包，可能会占用很大的内存
+        */
+    </script>
+</body>
+</html>
