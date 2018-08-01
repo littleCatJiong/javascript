@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>能力检测、怪癖检测</title>
+</head>
+<body>
+<script>
+    //一般先设计最通用的方案，然后再使用特定浏览器的技术增强该方案
+    //1.能力检测 ---  不仅识别浏览器，而且识别浏览器的能力，只要浏览器支持该能力，直接给出解决方案
+    if(Object.propertyInQuestion){
+        //使用propertyInQuestion
+    }
+    //能力检测的第一个概念： 最先检测的是达成目的的最常用的特性
+    function getElement(id){
+        //如果document.getElementById存在，直接调用     先测试达成目的最常用的特性，保证代码最优化
+        if(document.getElementById){                    //IE5之前，不支持document.getElementById
+            return document.getElementById(id);
+        } else if(document.all){
+            return document.all[id];
+        } else {
+            throw new Error('No way to retrieve element');
+        }
+    }
+
+    //能力检测的第二个概念： 必须测试实际要用到的特性，这个特性不一定要存在
+    function getWindowWidth(){
+        if(document.all){       //IE8之前的版本不支持window.innerWidth,但是document.all存在并不能代表就是IE浏览器
+            return document.documentElement.clientWidth;        //错误用法
+        } else {
+            return window.innerWidth;
+        }
+    }
+
+    //2.typeof，更可靠的能力检测  ----     一般情况下，要尽量的使用typeof来进行能力检测
+    function isSortable(object){
+        return  !!object.sort;               //这样做只是检测object是否存在sort属性，并不代表就一定是sort方法
+    }
+    var result = { sort: true};
+    console.log(isSortable(result));                     //true, 但是result只是包含一个值为true的属性
+
+    function isSortable1(object){
+        return typeof object.sort == 'function' ? true : false;
+    }
+    var result1 = {
+        sort: function(){}
+    };
+    console.log(isSortable1(result));                     //false
+    console.log(isSortable1(result1));                    //true
+
+    //在浏览器环境下测试任何对象的某个特性是否存在
+    function isHostMethod(object, property){
+        var oType = typeof object[property];
+
+        //IE8之前,typeof document.createElement返回的是object，IE9之后，返回的是function，但是typeof xhr.open返回的又是'unknown'
+        return oType == 'function' || (!!(oType == 'object' && object[property])) || oType == 'unknown';
+    }
+    //ActiveX对象只有IE支持，typeof xhr.open会返回’unknown'
+    /*var xhr = new ActiveXObject("Microsoft.XMLHttp");
+    console.log(isHostMethod(xhr, "open"));
+    console.log(isHostMethod(xhr, "foo"));*/
+
+    //能力检测，不是浏览器检测 --    检测某个或者几个特性并不能检测出浏览器的类型
+
+    //检测还不够具体，除了firefox具有vendor、vendorSub属性，还有safari
+    var isFirefox = !!(navigator.vendor && navigator.vendorSub);
+
+    //检测过度，假设之后的IE版本都包含这两个属性，并且其他浏览器都没有这两个属性
+    var isIE = !!(document.all && document.uniqueID);
+
+    //检测浏览器是否支持Netscape风格的插件
+    var hasNSPlugins = !!(navigator.plugins && navigator.plugins.length);
+
+    //检测浏览器是否具有DOM1级规定的能力，多个特性同时检测
+    var hadDOM1 = !!(document.getElementById && document.createElement && document.getElementsByTagName);
+
+    //2.怪癖检测  ---   识别浏览器的特殊行为，也就是检测浏览器的bug
+    var hasDontEnumQuirk = function(){
+        var o = {
+            toString: function(){},                 //实例属性toString与原型属性中的toString属性相同个，但是原型中的toString的enumerable设置为false，那么此属性就不会在for-in中出现
+            toLocaleString: function(){}
+        };
+        for(var prop in o){
+            if(prop == 'toString'){
+                return true
+            }
+        }
+        return false;
+    };
+    console.log('toString', hasDontEnumQuirk());                //true，    IE8之前返回false
+
+    //在之前的Safari浏览器中，可以for-in遍历出隐藏的属性，无论是实例属性还是原型属性
+    var hasDnotEnumQuirk1 = function(){
+        var o = { toString : function(){} };
+        var count = 0;
+        for(var prop in o){
+            if(prop == 'toString'){
+                count ++;
+            }
+        }
+        return (count > 1)
+    };
+    console.log('是否有多个toString属性：', hasDnotEnumQuirk1());       //是否有多个toString属性： false
+</script>
+</body>
+</html>
