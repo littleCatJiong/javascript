@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>screen对象、history对象</title>
+</head>
+<body>
+    <button id="backBtn">返回上一个页面</button>
+    <button id="forwarBtn">返回下一个页面</button>
+    <script>
+        window.onload = function() {
+            //1.在编程中的作用不大，只是用来表明客户端的能力，其中包括浏览器窗口外部的显示器信息。每个浏览器中的screen对象都包含着各不相同的属性
+            var backBtn = document.getElementById('backBtn');
+            var forwarBtn = document.getElementById('forwarBtn');
+            history.back();
+            history.back();
+            backBtn.onclick = function(){
+                history.go(-1);
+                //history.back();
+            };
+            forwarBtn.onclick = function(){
+                //history.go(1);
+                history.forward();
+            }
+        }
+    </script>
+</body>
+</html>

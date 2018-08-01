@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>window对象</title>
+</head>
+<body>
+    <script>
+        //1.全局作用域
+        var age = 29;
+        function sayAge(){
+            console.log(this.age);
+        }
+        console.log(age);           //29
+        sayAge();                   //29
+
+        //window对象同时扮演着JavaScript中的Global对象，因此所有的全局作用域中的变量和函数都会变成window对象的属性和方法
+        window.sayAge();            //29
+
+        //创建全局变量和window属性之间的差别
+        //console.log(a);             //error a is not defined
+        console.log(window.b);      //undefined
+
+        //全局变量不能通过delete删除，但是window的属性可以
+        window.color = 'red';
+        console.log(delete age);            //false
+        console.log(delete window.age);     //false
+        console.log(delete window.color);   //true
+
+        //2.窗口关系及框架
+        //3.窗口位置
+        var leftPos = (typeof window.screenLeft == 'number') ? window.screenLeft : window.screenX;
+        var topPos = (typeof window.screenTop == 'number') ? window.screenTop : window.screenY;
+        console.log(leftPos, topPos);    //0, 0
+        //moveTo和moveBy可能会被浏览器禁用
+        window.moveTo(200,300);
+        window.moveBy(50,0);
+
+        //4.窗口大小      outerWidth、outerHeight、innerWidth、innerHeight
+            /*
+                 outerWidth/outerHeight
+                    IE9+、Safari、Firefox:  返回浏览器窗口本身的尺寸
+                    Opera: 页面视图容器的大小
+                    Chrome： 页面视口的大小
+            */
+        var pageWidth = window.innerWidth;
+        var pageHeight = window.innerHeight;
+        if(typeof pageWidth != 'number'){
+            if(window.compatMode == 'CSS1Compat'){
+                pageWidth = document.documentElement.clientWidth;
+                pageHeight = document.documentElement.clientHeight;
+            } else {
+                pageWidth = document.body.clientWidth;
+                pageHeight = document.body.clientHeight;
+            }
+        }
+        console.log(pageWidth, pageHeight);     //1536 150
+        //调整浏览器窗口的大小： resizeTo/resizeBy，有可能被禁用
+
+        //5.导航和打开窗口
+            /*
+                window.open():接受四个参数
+                    ①.URL                   一般只用第一个参数就好
+                    ②.窗口目标
+                        自定义的已经存在的窗口或框架名，例如：window.open(URL, 'topFrame') 如果topFrame不存在，会创建一个新的窗口并命名为topFrame
+                        特殊的窗口名称：‘_blank', '_self', '_parent', '_top'
+                    ③.一个特性字符串
+                        如果window.open传入的第二个参数并不是一个实际存在的窗口，那么该方法就会根据第三个参数创建一个新的窗口，否则打开一个带有全部默认设置的新窗口
+                        如果不打开新的窗口，该参数会被忽略
+                        表示特性的选项：
+                            常用的height、width、left、location、menubar、resizable、scrollbar、status、toolbar、top
+                    ④.新页面是否取代浏览器历史记录中当前加载页面的布尔值     一般用于不打开新窗口的情况下
+                window.open()返回对窗口的引用，浏览器在禁止修改窗口大小的情况下，可以通过此返回值对新窗口进行设置
+                window.open().close()
+                    ①.该方法只能用于通过window.open打开的窗口，并且通过window.open()返回值（对新窗口的引用）调用close方法
+                    ②.对于主窗口，如果没有用户的允许，是不能关闭的
+                    ③.但可以调用top.close()在不经允许的情况下关闭主窗口
+                window.open().closed属性
+                    弹出窗口关闭之后，对窗口的引用还在，也一般只用于检测窗口是否已关闭
+                window.open().opener属性
+                    ①.返回打开自身窗口的原始窗口的指针
+                    ②.但是原始窗口没有指针指向弹出的新窗口
+                    ③.我们需要自己手动实现原始窗口与弹出窗口的通信，如果两个wndow对象之间要进行通讯，就不能在单独的进程中运行
+                    ④.可以将opener属性设置为null，从而断开两个window之间的联系，可以在独立的进程中运行。一旦切断，就不能再恢复
+                window.open打开弹出的安全限制，允许用户手动创建弹窗打开
+
+            */
+        //新的窗口，打开http://www.baidu.com，窗口全部默认属性
+        window.open('http://www.baidu.com', '_blank');
+        //在新的可以调整，初始大小为400*400，并且距离屏幕顶端和左端个10像素的窗口，打开http://www.baodu.com网址
+        window.open('http://www.baodu.com', '_blank', 'width=400, height=400,top=10, left=10, resizable=yes');
+        //
+        var newWin = window.open('http://www.baidu.com', '_blank', 'width=400, height=400, top=10, left=10, resizable=yes');
+        newWin.resizeTo(500, 500);
+        newWin.moveTo(400, 400);
+        setTimeout(function(){
+            newWin.close();
+            top.close();
+            console.log(newWin.closed);         //true
+        }, 500);
+        var newWindow2 = window.open('http://www.baidu.com', '_blank', 'width=400, height=400, top=100, left=100, resizable=yes');
+        console.log(newWindow2.opener == window);
+        newWindow2.opener = null;
+
+        //弹出窗口屏蔽程序
+        var newWindow3 = window.open('http://www.baidu.com', '_blank', 'width=400, height=400, top=10, left=10, resizable=yes');
+        if(newWindow3 == null){
+            console.log('The popup was blocked');
+        }
+        var blocked = false;
+        try{
+            var newWindow4 = window.open('http://www.baidu.com', '_blank', 'width=400, height=400, top=10, left=10, resizable=yes');
+            if(newWindow4.oepner == null){
+                blocked = true;
+            }
+        } catch(ex){
+            blocked = true;
+        }
+        if(blocked){
+            console.log('The popup was blocked');
+        }
+        //6.间歇调用和超时调用
+            //setTimeout第一个参数：执行函数
+        setTimeout('alert("字符串形式")', 100);          //字符串形式，可能会导致性能损失，因此不推荐使用
+        setTimeout(function(){
+            alert('函数形式');
+        }, 300);
+            /*
+                setTimeout第二个参数：多久时间执行函数
+                    ①.Javascript是一个单线程的解析器，为了控制要执行的代码，就有一个JavaScript任务队列，这些任务会按照他们添加到队列的顺序执行。
+                    ②.setTimeout的第二个参数时过多久，要将该任务放到任务队列中，如果队列是空的，自然会立马执行
+            */
+        var timeId = setTimeout(function(){
+            console.log('被执行了!');
+        }, 400);
+        clearTimeout(timeId);
+        //7.系统对话框
+            /*
+                想用户显示信息的三种系统对话框：对话框的ui与HTML或CSS无关，只有操作系统或者浏览器设置决定的。显示这些对话框时，代码会停止执行
+                    alert，用于一般的警告信息，用户不允许任何操作的情况
+                    confirm，确认对话框，需要用户的相应操作，通过返回值确认用户的选择，可用于例如电子邮件删除的确认对话框
+                    prompt，提示对话框，提示用户输入信息
+            */
+        alert(1);
+        console.log(alert(2));      //undefined
+
+        var ans = confirm('Are you sure?');
+        console.log(ans);   //如果点击ok，返回true，否则返回false
+
+        var info = prompt("What's your name", 'Jack');  //第一个参数，输入信息，第二个参数，文本输入框提示
+        console.log(info);      //如果点取消，返回null，如果点确认，返回输入框内容
+    </script>
+</body>
+</html>

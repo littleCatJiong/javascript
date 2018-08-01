@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>navigator对象</title>
+</head>
+<body>
+    <script>
+        //navigator的属性，通常用来检测显示网页的浏览器类型
+
+        //1.检测插件，检测浏览器是否安装了特定的插件，对于非IE浏览器来说，可以使用plugins数组
+        //非IE
+        function hasPlugin(name){
+            name = name.toLowerCase();
+            for(var i=0; i<navigator.plugins.length; i++){
+                if(navigator.plugins[i].name.toLowerCase().indexOf(name) > -1){
+                    return true;
+                }
+            }
+            return false;
+        }
+        //IE
+        function hasPluginIE(name){
+            try{
+                new ActiveXObject(name);
+                return true;
+            } catch(ex){
+                return false;
+            }
+        }
+        //检测所有浏览器中是否安装flash插件
+        function hasFlashPlugin(){
+            var result = hasPlugin('Flash');
+            if(!result){
+                result = hasPluginIE('ShockwaveFlash.ShockwaveFlash');
+            }
+            return result;
+        }
+    </script>
+</body>
+</html>
