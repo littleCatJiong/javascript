@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DOM_Document节点</title>
+</head>
+<body>
+    <div id="myDiv" name="div1">some text 1</div>
+    <div id="myDiv">some text 2</div>
+    <ul>
+        <li><input type="radio" name="color" value="red" id="colorRed"></li>
+        <li><input type="radio" name="color" value="green" id="colorGreen"></li>
+        <li><input type="radio" name="color" value="blue" id="colorBlue"></li>
+    </ul>
+    <a>链接一</a>
+    <a name="link2" href="#">链接二</a>
+    <a name="link3">链接三</a>
+    <form id="form1"></form>
+    <form id="form2"></form>
+    <img src="" alt="img1">
+    <img src="" alt="img2">
+<script>
+    /*
+        Document节点的特征：
+            nodeType为9
+            nodeName为'#document'
+            nodeValue为null
+            parentNODE为null
+            ownerDocument为null
+            其子节点可能是一个 DocumentType（最多一个）、Element（最多一个）、ProcessingInstruction 或 
+
+        Document类型可以表示HTML页面或者基于其他XML的文档，不过最常见的还是作为HTMLDocuemnt的实例对象
+    */
+    //一、文档的子节点
+    /*<html>...</html>*/
+    var html = document.documentElement;    //html节点
+    console.log(html == document.childNodes[0]);    //true
+    console.log(html == document.firstChild);   //true
+
+    /*<!DOCType htmk><html>...</html>*/
+    var doctype = document.childNodes[0];     
+    console.log(doctype == document.doctype);   //true
+
+    var body = document.body;
+
+    //二、文档信息
+    console.log(document.title);    //DOM_Document节点
+    document.title = 'new Title';
+
+    //URL/domain/referrer等信息，一般都出现于请求的头部，但是我们可以通过document对象的相关属性来访问到这些信息
+    console.log(document.URL);      //完整域名
+    console.log(document.domain);   //域名
+    console.log(document.referrer); //来源页面的URL  与document.URL是相互关联的
+
+    //三、查找元素    DOM应用，最常用的也就是取得特定的某个元素或某组元素，然后执行一些操作
+    //1.document.getElementById
+    var oDIv1 = document.getElementById('myDiv');   //如果页面中包含多个id相同的元素，只返回第一个
+    var oDiv2 = document.getElementById('mydiv');   //null, 区分大小写
+
+    //2.document.getElementByTagName
+    //返回一个HTMLCollection对象，保存在ODivList中
+    var oDivList = document.getElementsByTagName('div'); //返回一个HTMLCollection对象，与NodeList相似
+    oDivList[0] == oDivList.item(0);    //true, 第一个div元素    *传入数字时，后台就会调用item方法
+    oDivList['div1'];   //*传入字符串时，后台就会调用namedItem方法
+    oDivList.length;  //2 
+    oDivList.namedItem('div1');     //oDivList中，name属性值为div1的div元素
+
+    //3.document.getElementByName
+    //返回一个NodeList对象，保存了name属性为color的一组元素
+    var inputList = document.getElementsByName('color');
+
+    //四、特殊集合
+    console.log(document.anchors);  //HTMLCollection对象，带name特性的所有<a>元素
+    console.log(document.forms);  //HTMLCollection对象，返回所有的<form>元素 == document.getElementsByTagName('form')
+    console.log(document.images);   //HTMLCollection对象，返回所有的<img>元素 == document.getElementsByTagName('img')
+    console.log(document.links);    //HTMLCollection对象，带href特性的所有<a>元素
+
+    //五、文档写入
+    //直接写入内容
+    document.write('<strong>documnet.wite写入</strong>');
+    document.writeln('<div>documnet.witeln写入</div>');   //相当于末尾添加/n换行符
+    /*window.onload = function(){
+        documen.write('test');          //页面会被重新
+    }*/
+    //动态包含外部资源
+        document.write("<script type=\'text/javascript\' src=\'file.js\'>" + "<\/script>");
+</body>
+</html>

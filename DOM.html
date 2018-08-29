@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script>
+    /*
+        DOM  -  Document Object Model,文档对象模型
+            表现和操作页面标记的真正的跨平台、语言中立的方式
+            描绘另一个层次化的节点树，可以添加、删除和修改页面的某一部分
+            DOM1级规范，为基本的文档结构及查询提供了接口
+            IE中的所有DOM对象都是以COM对象的形式实现的，也就是说DOM对象与原生的JavaScript对象的行为或活动特点并不一致
+    */
+    //节点层次  ---   节点之间的关系行程层次，而所有页面标记则表现为一个以特点节点为根节点的树状结构
+        //文档节点是每个文档的根节点，文档节点只有一个子节点，就是html元素，也就是文档元素
+    //一、节点类型  ---   Node
+        /*
+          12中类型：
+            HTML元素    -->       元素节点
+            特性        -->       特性节点
+            注释        -->       注释节点
+            文档类型    -->       文档类型节点
+          NODE类型：所有的节点类型都继承自Node类型，因此所有的节点类型都具共享相同的属性和方法
+        */
+    //1.nodeType
+    if(someNode.nodeType == Node.ELEMENT_NODE){
+        alert('someNode is an element');
+    }
+    if(someNode.nodeType == 1){                 //IE 不支持Node.ELEMENT_NODE
+        alert('someNode is an element');
+    }
+    //2.nodeName /  nodeValue
+    if(someNode.nodeType == 1){
+        alert(someNode.nodeName);       //nodeName的值是元素的名称
+        alert(someNode.nodeValue);      //nodeValue的值始终是null
+    }
+    //二、节点关系   父 <--> 子
+    //1.childNodes:返回一个NodeList对象，类数组对象，保存一组有序的节点     *NodeLlist对象，是随着DOM结构的变化而变化的
+    var firstChild = someNode.childNodes[0];    //可以像数组一样，通过位置来访问其中的元素
+    var secondChild = someNode.childNodes.item(1);      //可以使用item来访问其中的元素
+    var count = someNode.childNodes.length;     //表示访问时候的那一刻，节点的数量
+
+    //2.将NodeList对象转换为Array类型
+    var arrayNodes = Array.prototype.slice().call(someNode.childNodes, 0);
+
+    //3.parentNode:指向文档树种的父节点
+    var firstNode = someNode.childNodes[0];
+    var secondNode = someNode.childNodes[1];
+    var lastNode = someNode.childNodes[someNode.childNodes.length - 1];
+    firstNode.parentNode == firstNode.parentNode == lastNode.parentNode;
+    firstNode == someNode.firstNode;
+    lastNode == someNode.lastNode
+
+    //4.nextSibling / previousSibling
+    firstNode.nextSibling == secondNode;
+    secondNode.previousSibling = firstNode
+
+    if(someNode.nextSibling == null){
+        alert('last node');
+    } else if(someNode.previousSibling == null){
+        alert('first node');
+    }
+    //只有一个子节点
+    if(firstNode == secondNode){
+        alert('只有一个子节点');
+    }
+    //没有一个子节点
+    if(firstNode == secondNode == null){
+        alert('没有子节点');
+    }
+    //5.hasChildNodes
+
+    //三、操作节点
+    //1.appendChild: 末尾添加节点
+    var returnNode = someNode.appendChild(newNode);
+    alert(returnNode == newNode);   //true
+    alert(someNode.lastChild == newNode);   //true
+
+    var returnNode1 = someNode.appendChild(someNode.firstChild);
+    alert(returnNode1 == someNode.firstChild);      //false
+    alert(returnNode1 == someNode.lastChild);       //true
+
+    //2.insertBefore   定义节点添加位置
+    var returnNode2 = someNode.insertBefore(newNode, null);     //null, 与appendChild相似
+    alert(returnNode2 = someNode.lastChild);    //true
+
+    var returnNode3 = someNode.insertBefore(newNode, someNode.firstChild);
+    alert(returnNode3 == someNode.firstChild);  //true  在第一个节点前面添加，newNode则成为第一个节点
+
+    var returnNode4 = someNode.insertBefore(newNode, someNode.lastChild);
+    alert(returnNode4 == someNode.childNodes[someNode.childNodes.length - 2]);  //在最后一个节点前面添加
+
+    //3.replaceChild    替换节点
+    var returnNode5 = someNode.replaceChild(newNode, someNode.firstChild);
+    var returnNode6 = someNode.replaceChild(newNode, someNode.lastChild);
+
+    //4.removeChild     删除节点
+    var returnNode5 = someNode.removeChild(someNode.firstChild);
+    var returnNode6 = someNode.removeChild(someNode.lastChild);
+
+    //5.其他方法:所有节点都有的方法 cloneNode、normalize
+    var deepList = myList.cloneNode(true);  //深度复制，包括下面的左右子节点
+    alert(deepList.childNodes.length);
+
+    var deepList2 = myList.cloneNode(false);    //浅复制
+    alert(deepList2.childNodes.length);     //0
+</script>
+</body>
+</html>

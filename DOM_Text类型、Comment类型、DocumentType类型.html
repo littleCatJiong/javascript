@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DOM_Text文本节点、Comment注释节点、DocumentType类型、Attr类型</title>
+    <style>
+    .box {
+        width: 400px;
+        height: 100px;
+        background: pink;
+    }
+    </style>
+</head>
+<body>
+    <div id="myDiv" name="div1">some text 1</div>
+    <div id="myDiv">some text 2</div>
+    <ul>
+        <li><input type="radio" name="color" value="red" id="colorRed"></li>
+        <li><input type="radio" name="color" value="green" id="colorGreen"></li>
+        <li><input type="radio" name="color" value="blue" id="colorBlue"></li>
+    </ul>
+    <a>链接一</a>
+    <a name="link2" href="#">链接二</a>
+    <a name="link3">链接三</a>
+    <form id="form1"></form>
+    <form id="form2"></form>
+    <img src="" alt="img1">
+    <img src="" alt="img2">
+    <div id="commentId"><!--  注释内容 --></div>
+<script>
+    /*
+        Text节点的特征：
+            nodeType为3
+            nodeName为'#text'
+            nodeValue为节点所包含的内容
+            parentNODE为Element
+            没有子节点
+    */
+    //一、创建文本节点
+    var strongEle = document.createTextNode('Hello World!');
+    var div = document.createElement('div');
+    div.className = 'box';
+    div.appendChild(strongEle);
+
+    document.body.appendChild(div);
+
+    var anotherEle = document.createTextNode('Yes');
+    div.appendChild(anotherEle);    //无空格连接
+
+    //二、规范化文本节点
+    console.log(div.childNodes.length); //2,2个文本节点
+    console.log(div.firstChild.nodeValue);      //Hello World!
+    div.normalize();
+    console.log(div.childNodes.length); //1
+    console.log(div.childNodes.item(0).nodeValue);      //'Hello World!Yes'
+
+    //三、分割文本节点
+    var newTextNode = div.firstChild.splitText(5);
+    console.log(div.firstChild.nodeValue);      //Hello
+    console.log(newTextNode.nodeValue);         //World!Yes
+
+     /*
+        Comment节点的特征：
+            nodeType为8
+            nodeName为'#comment'
+            nodevalue为注释内容
+            parentNODE为document或Element
+            没有子节点
+        Comment和Text继承自相同的基类
+    */
+    /*  <div id="commentId"><!--  注释内容 --></div>  */
+    var div = document.getElementById('commentId');
+    var commentNode = div.firstChild;
+    console.log(commentNode.nodeValue);         //注释内容
+
+     /*
+        DocumentType节点的特征：
+            nodeType为10
+            nodeName为doctype的名称
+            nodevalue为null
+            parentNODE为document
+            没有子节点
+        Documenttype和Text继承自相同的基类
+    */
+    console.log(document.doctype.nodeName); //html
+    console.log(document.doctype.name); //html
+
+    /*
+        Attr节点的特征：
+            nodeType为2
+            nodeName为特性的名称
+            nodevalue为特性的值
+            parentNODE为null
+            没有子节点
+    */
+</script>
+</body>
+</html>

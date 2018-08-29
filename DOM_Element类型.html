@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DOM_Element元素节点</title>
+</head>
+<body>
+    <div id="myDiv" name="div1" title="divBox" class="divStyle" dir="rtl" lang="English" my_speical_attribute="hello" style="background: red" onclick="alert('1')">some text 1</div>
+    <div id="myDiv">some text 2</div>
+    <ul>
+        <li><input type="radio" name="color" value="red" id="colorRed"></li>
+        <li><input type="radio" name="color" value="green" id="colorGreen"></li>
+        <li><input type="radio" name="color" value="blue" id="colorBlue"></li>
+    </ul>
+    <a>链接一</a>
+    <a name="link2" href="#">链接二</a>
+    <a name="link3">链接三</a>
+    <form id="form1"></form>
+    <form id="form2"></form>
+    <img src="" alt="img1">
+    <img src="" alt="img2">
+<script>
+    /*
+        Element节点的特征：
+            nodeType为1
+            nodeName为标签名    也可以通过tagName访问
+            nodeValue为null
+            parentNode可能是Document或Element
+            其子节点可能是一个 Element、Text、Commnet
+    */
+    var myDiv = document.getElementById('myDiv');
+    console.log(myDiv.nodeName);    //'DIV', HTML中，标签名都是用大写表示，XML相同
+    console.log(myDiv.nodeName == myDiv.tagName);   //true
+    if(myDiv.tagName.toLowerCase() == 'div'){
+        console.log('<div>元素');
+    }
+    //一、HTML元素
+    //所有的HTML元素都是HTMLElement类型表示的，HTMLElement类型是直接继承自Element并添加了一些属性，分别对应每个HTML元素的都存在的标准属性：id，title，dir，langclassName
+    console.log(myDiv.id);              //myDiv
+    console.log(myDiv.title);           //divBox
+    console.log(myDiv.className);       //divStyle
+    console.log(myDiv.dir);             //'rtl'
+    console.log(myDiv.lang);            //'English'
+
+    //二、取得特性
+
+    //1.可以通过元素本身属性取得特性
+    console.log(myDiv.id); 
+
+    //2.getAttribute方法访问特性            
+    console.log(myDiv.getAttribute('id'));      
+    console.log(myDiv.getAttribute('title'));
+    console.log(myDiv.getAttribute('class'));    //传入的特性名与实际的特性名相同，而上面的是通过对象属性访问的特性时，用className
+    console.log(myDiv.getAttribute('dir'));
+    console.log(myDiv.getAttribute('lang'));
+
+    //3.调用getAttribute，特性不存在时，返回null
+    console.log(myDiv.getAttribute('text'));     //null, 
+
+    //4.调用getAttribute,可以获取自定义特性的值
+    console.log(myDiv.getAttribute('my_speical_attribute'));     //自定义特性，h5之后一般要求自定义特性前面加data-，以便区分
+
+    //5.调用getAttribute，特性不区分大小写
+    console.log(myDiv.getAttribute('id') == myDiv.getAttribute('ID'));      //true
+
+    //6.只有公认的（非自定义）特性，才会以属性的形式添加到DOM对象中
+    console.log(myDiv.id);      //'myDiv'，公认特性，该元素的DOM对象存在对应的属性
+    console.log(myDiv.my_speical_attribute);    //'undefined'
+
+    //7.两个特殊的特性，属性值与getAttribute返回的值不相同
+    console.log(myDiv.style);                   //返回一个对象
+    console.log(myDiv.getAttribute('style'));   //background: red, 返回style属性值定义的css文本
+
+    console.log(myDiv.onclick);                 //返回JavaScript函数
+    console.log(myDiv.getAttribute('onclick')); //alert('1'),返回onclick属性定义的JavaScript字符串
+
+    //所以，一般通过JavaScript操作DOM时，使用对象的属性，只有在获取自定义属性时使用getAttribute方法
+
+    //三、设置/删除特性
+    myDiv.setAttribute('id', 'testDiv');
+    myDiv.removeAttribute('class');
+
+    //四、attributes特性
+    var divAttrList = myDiv.attributes;     //NamedNodeMap类型，拥有getNamedItem、removeNamedItem、setNamedItem、item方法
+    var id = divAttrList.getNamedItem('id').nodeValue;
+    //简写
+    var id = myDiv.attributes['id'].nodeValue;
+
+    //五、创建元素
+    var firstDiv = document.createElement('div');
+    firstDiv.id = 'firstDiv';
+    firstDiv.className = 'box';
+    firstDiv.style = "width:100px; height: 100px; background:red;";
+    document.body.appendChild(firstDiv);
+</script>
+</body>
+</html>
