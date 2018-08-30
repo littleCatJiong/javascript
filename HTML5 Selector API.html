@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>HTML5对DOM的扩充</title>
+</head>
+<body>
+    <div class='box current colorRed' id="myDiv1"><span>span1</span></div>
+    <div class='box' id="myDiv2"><span>span2</span></div>
+    <span class="spanStyle">span2</span>
+    <img id="img1" class="button" src="" alt="图片一">
+    <img id="img2" class="button" src="" alt="图片二">
+    <button class="myButton">按钮</button>
+    <div id="myOwnDiv" data-divId="001" data-myname="Nicholas">Nicholas</div>
+<script>
+    //一、与类的扩充
+    //1.getElementsByClassName方法，接受一个参数，即一个包含一或多个类名的字符串，返回带有指定类的所有元素的HTMLCollection
+    var myAllDiv = document.getElementsByClassName('box');
+    var myCurrentDiv = document.getElementsByClassName('box current');
+
+    //2.classList属性, 返回元素的class属性值，一个DOMTokenList类型
+    /*<div class='box current colorRed' id="myDiv1"><span>span1</span></div> */
+    var div = document.querySelector('#myDiv1'); 
+    var pos = -1;
+    var classNames = div.className.split(/\s+/);
+    for(var i=0; i<classNames.length; i++){
+        if(classNames[i] == 'current'){
+            pos = i;
+            break;
+        }
+    }
+    classNames.splice(pos, 1);
+    div.className = classNames.join(' ');
+
+    console.log(div.classList);         //DOMTokenList: ['box', 'colorRed']
+    div.classList.remove('colorRed');   //删除colorRed类
+    div.classList.add('disabled');      //添加disabled类
+    div.classList.toggle('current');    //当前class不包括current，就添加current样式，如果包括，就去掉current样式
+    console.log(div.classList);         //DOMTokenList: ['box', 'disabled', current']
+
+    //二、焦点管理
+    var myButton = document.querySelector('.myButton');
+    myButton.focus();
+    console.log(myButton === document.activeElement);   //true
+    console.log(document.hasFocus());       //true, 文档是否获取焦点，从而知道用户是否在与页面交互
+
+    //三、HTMLDocument变化
+    //1.readyState属性
+    if(document.readyState == 'complete'){
+        //
+    }
+    //2.兼容模式
+    if(document.compatMode == 'CSS1Compat'){
+        console.log('标准模式');
+    }else {
+        console.log('混杂模式');
+    }
+    //3.head属性
+    console.log(document.head);
+
+    //四、字符集属性
+    console.log(document.charset);
+
+    //五、自定义数据属性
+    var myOwnDiv = document.querySelector('#myOwnDiv');
+    var divId = myOwnDiv.dataset.divid; //divid属性名一定要小写
+    var divName = myOwnDiv.dataset.myname;
+
+    //myOwnDiv.outerText = 'Hello'相当于如下的操作
+    var text = document.createTextNode('Hello');
+    myOwnDiv.parentNode.replaceChild(text, myOwnDiv);
+</script>
+</body>
+</html>

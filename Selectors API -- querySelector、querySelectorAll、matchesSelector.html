@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Selectors API —— querySelector、querySelectorAll、matchesSelector</title>
+</head>
+<body>
+    <div class='colorRed' id="myDiv"><span>span1</span></div>
+    <span class="spanStyle">span2</span>
+    <img id="img1" class="button" src="" alt="图片一">
+    <img id="img2" class="button" src="" alt="图片二">
+<script>
+    //一、querySelector   返回匹配的第一个元素
+    var myBody = document.querySelector('body');    
+    var myDiv = document.querySelector('#myDiv');
+    var myImg = document.querySelector('img.button');
+    //取得文档中的第一个class为spanStyle的元素
+    var mySpan = document.querySelector('.spanStyle');
+    //取得id为myDiv的元素下的第一个span元素
+    var divSpan = myDiv.querySelector('span');
+
+    //二、querySelectorAll    返回匹配的所有元素，是一个NodeList类型
+    var myAllImgs = document.querySelectorAll('img.button');
+    var myAllSpans = document.querySelectorAll('span');
+    var divAllSpans = myDiv.querySelectorAll('span');
+
+    for(var i=0; i<myAllSpans.length; i++){
+        var span = myAllSpans[i];
+        span.className = 'testSpan';
+    }
+
+    //三、matchesSelector / msMatchesSelector /mozMatchesSelector / webkitMatchesSelector
+    console.log(document.body.webkitMatchesSelector('body'));
+    console.log(myDiv.webkitMatchesSelector('#myDiv'));
+    function myMatchesSelector(selector){
+        if(myDiv.matchesSelector){
+            return myDiv.matchesSelector(selector);
+        } else if(myDiv.msMatchesSelector){
+            return myDiv.msMatchesSelector(selector);
+        } else if(myDiv.mozMatchesSelector){
+            return myDiv.mozMatchesSelector(selector);
+        } else if(myDiv.webkitMatchesSelector){
+            return myDiv.webkitMatchesSelector(selector);
+        } else {
+            throw new Error('Not Supported!');
+        }
+    }
+
+    //四、元素遍历
+    console.log(document.body.childElementCount);   //5,不包括文本节点和注释节点的节点数
+    console.log(document.body.firstElementChild);
+    console.log(document.body.lastElementChild);
+    console.log(document.body.lastElementChild.previousElementSibling);
+    console.log(document.body.firstElementChild.nextElementSibling);
+</script>
+</body>
+</html>

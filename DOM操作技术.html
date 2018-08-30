@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DOM操作技术</title>
+</head>
+<body>
+    <div class='colorRed'>box</div>
+<script>
+    //一、动态脚本
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'client.js';
+    document.body.appendChild(script);
+
+    function loadScript(url){
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+        document.body.appendChild(script);
+    }
+    loadScript('test.js');
+
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.appendChild(document.createTextNode("function sayHi(){alert('run script');}"));
+    document.body.appendChild(script);
+
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.text = 'function sayHi2(){alert("run script 2")}';
+    document.body.appendChild(script);
+    sayHi();
+    sayHi2();
+
+    //二、动态样式
+    /* <link rel="stylesheet" type="text/css" href="styles.css">   */
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = 'style.css';
+    document.getElementsByTagName('head')[0].appendChild(link);
+
+    /* <style type="text/css"> colorRed {     background-color: red; } </style>  */
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.appendChild(document.createTextNode('.colorRed {background: red;}'));
+    document.getElementsByTagName('head')[0].appendChild(style);
+
+    //三、操作表格
+    /*
+    <table border="1" width="100%">
+    <tbody>
+        <tr>
+            <td>Cell 1,1</td>
+            <td>Cell 2,1</td>
+        </tr>
+        <tr>
+            <td>Cell 1,2</td>             
+            <td>Cell 2,2</td>
+        </tr>
+    </tbody>
+    </table> 
+    */
+    var table = document.createElement('table');
+    table.border = 1;
+    table.width = '100%';
+    var tBody = document.createElement('tbody');
+    table.appendChild(tBody);
+    var row1 = document.createElement('tr');
+    tBody.appendChild(row1);
+    var cell1_1 = document.createElement('td');
+    cell1_1.appendChild(document.createTextNode('Cell 1,1'));
+    row1.appendChild(cell1_1);
+    var cell1_2 = document.createElement('td');
+    cell1_2.appendChild(document.createTextNode('Cell 2,1'));
+    row1.appendChild(cell1_2);
+
+    var row2 = document.createElement('tr');
+    tBody.appendChild(row2);
+    var cell2_1 = document.createElement('td');
+    cell2_1.appendChild(document.createTextNode('Cell 1,2'));
+    row2.appendChild(cell2_1);
+    var cell2_2 = document.createElement('td');
+    cell2_2.appendChild(document.createTextNode('Cell 2,2'));
+    row2.appendChild(cell2_2);
+
+    document.body.appendChild(table);
+
+    var table1 = document.createElement('table');
+    table1.border = 1;
+    table1.width = '100%';
+
+    var tbody1 = document.createElement('tbody');
+    table1.appendChild(tbody1);
+
+    tbody1.insertRow(0);
+    tbody1.rows[0].insertCell(0);
+    tbody1.rows[0].cells[0].appendChild(document.createTextNode('Cell 1,1'));
+    tbody1.rows[0].insertCell(1);
+    tbody1.rows[0].cells[1].appendChild(document.createTextNode('Cell 2,1'));
+
+    tbody1.insertRow(1);
+    tbody1.rows[1].insertCell(0);
+    tbody1.rows[1].cells[0].appendChild(document.createTextNode('Cell 1,2'));
+    tbody1.rows[1].insertCell(1);
+    tbody1.rows[1].cells[1].appendChild(document.createTextNode('Cell 2,2'));
+
+    document.body.appendChild(table1);
+</script>
+</body>
+</html>
